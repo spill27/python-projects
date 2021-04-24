@@ -1,3 +1,7 @@
+##############################################
+# Multithreading example
+##############################################
+
 import logging
 from threading import Thread
 import time
