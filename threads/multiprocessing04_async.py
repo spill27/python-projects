@@ -3,6 +3,7 @@
 # ASYNC CODE RUNNING IN THE SAME PROCESS AND SAME THREAD 
 # async uses CoRoutines which run on the same thread
 
+
 import logging
 import threading
 import multiprocessing
@@ -17,6 +18,7 @@ def display(msg):
     logging.info(f'{processname}/{threadname}: {msg}')
 
 # async function
+# the sync keyword marks a function for asyncronous operation
 async def work(name):
     display(name + ' starting')
     # do something
