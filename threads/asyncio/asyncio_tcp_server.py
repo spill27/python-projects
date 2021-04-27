@@ -16,6 +16,16 @@ TETRAMMS = 3
 acq = [False for i in range(TETRAMMS)]
 
 # SERVERS #########################################################################
+# send data
+async def sendData(sock, idx):
+    logging.info("Async - sendData Start")
+    while acq[idx] == True:
+        msg = "{:d}".format(random.randrange(1,100))
+        sock.sendall(msg.encode('utf8'))
+        await asyncio.sleep(1)
+    logging.info("Async - sendData stopped")
+
+
 # TetrAMMs
 async def tetramm(ip, port, idx):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -47,11 +57,13 @@ async def tetramm(ip, port, idx):
             logging.info(f'Start Received: start sending data')
             acq[idx] = True
             # start sending data
+            t = loop.create_task(sendData(con, idx))
         elif (data == b'stop\r\n'):
             logging.info(f'Stop Received: stopping data')
             acq[idx] = False
             # stop sending data
             logging.info(f'Exiting')
+            await asyncio.gather(t)
             con.close()
             break
         logging.info(f'Data: {data}')
@@ -69,7 +81,7 @@ def main():
     x = 0
     ips = ['127.0.0.'+ str(i+10) for i in range(TETRAMMS)]
     loop.run_until_complete(tetramm(ips[x], 10001, x))
-    loop.run_forever()
+    # loop.run_forever()
     # # free-up resources
     loop.close()
 
